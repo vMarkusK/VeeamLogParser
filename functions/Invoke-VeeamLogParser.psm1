@@ -90,12 +90,12 @@ Begin {
                     $Select
                 }
                 else {
-                    Write-Host "No matching lines found in '$($VeeamBasePath + $Folder)'!" -ForegroundColor Yellow
+                    Write-Host "No matching lines found!" -ForegroundColor Yellow
                 }
             }
         }
         else {
-            Throw "No Log Files found in '$VeeamBasePath'"
+            Throw "No Log Files found in '$($VeeamBasePath + $Folder)'"
         }
     }
 }
