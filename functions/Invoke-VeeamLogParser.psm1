@@ -36,7 +36,10 @@ param(
         [Switch]$Context,
     [Parameter(Mandatory=$True, ValueFromPipeline=$False, ParameterSetName="Endpoint", HelpMessage="Parse Endpoint Log Files")]
     [ValidateNotNullorEmpty()]
-        [Switch]$Endpoint
+        [Switch]$Endpoint,
+    [Parameter(Mandatory=$True, ValueFromPipeline=$False, ParameterSetName="Mount", HelpMessage="Parse Mount Log Files")]
+    [ValidateNotNullorEmpty()]
+        [Switch]$Mount
 
 )
 
@@ -101,6 +104,9 @@ Process {
 
     if ($Endpoint) {
         LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.*"
+    }
+    elseif ($Mount) {
+        LogParser -Folder "Backup" -File "Svc.VeeamMount.*"
     }
 
 }
