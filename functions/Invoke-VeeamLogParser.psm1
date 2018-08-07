@@ -40,33 +40,44 @@ param(
 
 )
 
-Process {
+Begin {
+    function LogParser {
+        param (
+            [Parameter(Mandatory=$True)]
+            [ValidateNotNullorEmpty()]
+                [String]$Folder,
+            [Parameter(Mandatory=$True)]
+            [ValidateNotNullorEmpty()]
+                [String]$File
+        )
 
-    if ($Endpoint) {
-        $Folder = "Endpoint"
-        $File = "Svc.VeeamEndpointBackup.*"
         if (Test-Path $($VeeamBasePath + $Folder)) {
+            $Content = Get-Content $($VeeamBasePath + $Folder + "\" + $File)
             if ($Context) {
                 Write-Host "Parsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
-                Get-Content $($VeeamBasePath + $Folder + "\" + $File) | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
+                $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
                 ""
                 Write-Host "Parsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
-                Get-Content $($VeeamBasePath + $Folder + "\" + $File) | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
-
+                $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
             }
             else {
                 Write-Host "Parsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
-                Get-Content $($VeeamBasePath + $Folder + "\" + $File) | Select-String -Pattern $VeeamWarningPattern -AllMatches
+                $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
                 ""
                 Write-Host "Parsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
-                Get-Content $($VeeamBasePath + $Folder + "\" + $File) | Select-String -Pattern $VeeamErrorPattern -AllMatches
-
+                $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
             }
         }
         else {
-            Throw "No Endpoint Log Files found in '$VeeamBasePath'"
+            Throw "No Log Files found in '$VeeamBasePath'"
         }
+    }
+}
 
+Process {
+
+    if ($Endpoint) {
+        LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.*"
     }
 
 }
