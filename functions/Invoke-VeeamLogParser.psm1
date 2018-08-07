@@ -34,10 +34,10 @@ param(
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages in Context")]
     [ValidateNotNullorEmpty()]
         [Switch]$Context,
-    [Parameter(Mandatory=$True, ValueFromPipeline=$False,  HelpMessage="Log Type")]
+    [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Log Type")]
     [ValidateNotNullorEmpty()]
     [ValidateSet("Endpoint","Mount","Backup")]
-        [Switch]$LogType
+        [String]$LogType
 )
 
 Begin {
