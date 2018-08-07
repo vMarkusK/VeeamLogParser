@@ -62,7 +62,7 @@ Begin {
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
                 if ($Select.Count -gt 0 ) {
                     if ($Limit) {
-                        $Select | Select-Object -First $Limit
+                        $Select | Select-Object -Last $Limit
                     }
                     else {
                         $Select
@@ -75,7 +75,7 @@ Begin {
                 [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
                 if ($Select.Count -gt 0 ) {
                     if ($Limit) {
-                        $Select | Select-Object -First $Limit
+                        $Select | Select-Object -Last $Limit
                     }
                     else {
                         $Select
@@ -90,7 +90,7 @@ Begin {
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
                 if ($Select.Count -gt 0 ) {
                     if ($Limit) {
-                        $Select | Select-Object -First $Limit
+                        $Select | Select-Object -Last $Limit
                     }
                     else {
                         $Select
@@ -103,7 +103,7 @@ Begin {
                 [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
                 if ($Select.Count -gt 0 ) {
                     if ($Limit) {
-                        $Select | Select-Object -First $Limit
+                        $Select | Select-Object -Last $Limit
                     }
                     else {
                         $Select
@@ -123,13 +123,13 @@ Begin {
 Process {
 
     if ($LogType -eq "Endpoint") {
-        LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.*"
+        LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
     }
     elseif ($LogType -eq "Mount") {
-        LogParser -Folder "Backup" -File "Svc.VeeamMount.*"
+        LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
     }
     elseif ($LogType -eq "Backup") {
-        LogParser -Folder "Backup" -File "Svc.VeeamBackup.*"
+        LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
     }
 
 }
