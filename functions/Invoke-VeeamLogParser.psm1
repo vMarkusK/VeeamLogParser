@@ -34,16 +34,10 @@ param(
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages in Context")]
     [ValidateNotNullorEmpty()]
         [Switch]$Context,
-    [Parameter(Mandatory=$True, ValueFromPipeline=$False, ParameterSetName="Endpoint", HelpMessage="Parse Endpoint Log Files")]
+    [Parameter(Mandatory=$True, ValueFromPipeline=$False,  HelpMessage="Log Type")]
     [ValidateNotNullorEmpty()]
-        [Switch]$Endpoint,
-    [Parameter(Mandatory=$True, ValueFromPipeline=$False, ParameterSetName="Mount", HelpMessage="Parse Mount Log Files")]
-    [ValidateNotNullorEmpty()]
-        [Switch]$Mount,
-    [Parameter(Mandatory=$True, ValueFromPipeline=$False, ParameterSetName="Backup", HelpMessage="Parse Backup Log Files")]
-    [ValidateNotNullorEmpty()]
-        [Switch]$Backup
-
+    [ValidateSet("Endpoint","Mount","Backup")]
+        [Switch]$LogType
 )
 
 Begin {
@@ -105,13 +99,13 @@ Begin {
 
 Process {
 
-    if ($Endpoint) {
+    if ($LogType -eq "Endpoint") {
         LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.*"
     }
-    elseif ($Mount) {
+    elseif ($LogType -eq "Mount") {
         LogParser -Folder "Backup" -File "Svc.VeeamMount.*"
     }
-    elseif ($Backup) {
+    elseif ($LogType -eq "Backup") {
         LogParser -Folder "Backup" -File "Svc.VeeamBackup.*"
     }
 
