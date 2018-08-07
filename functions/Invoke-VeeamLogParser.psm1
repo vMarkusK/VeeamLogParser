@@ -34,6 +34,9 @@ param(
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages in Context")]
     [ValidateNotNullorEmpty()]
         [Switch]$Context,
+    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages limited number of messages")]
+    [ValidateNotNullorEmpty()]
+        [Int]$Limit,
     [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Log Type")]
     [ValidateNotNullorEmpty()]
     [ValidateSet("Endpoint","Mount","Backup")]
@@ -58,7 +61,12 @@ Begin {
                 Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
                 if ($Select.Count -gt 0 ) {
-                    $Select
+                    if ($Limit) {
+                        $Select | Select-Object -First $Limit
+                    }
+                    else {
+                        $Select
+                    }
                 }
                 else {
                     Write-Host "No matching lines found!" -ForegroundColor Yellow
@@ -66,7 +74,12 @@ Begin {
                 Write-Host "`nParsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
                 if ($Select.Count -gt 0 ) {
-                    $Select
+                    if ($Limit) {
+                        $Select | Select-Object -First $Limit
+                    }
+                    else {
+                        $Select
+                    }
                 }
                 else {
                     Write-Host "No matching lines found!" -ForegroundColor Yellow
@@ -76,7 +89,12 @@ Begin {
                 Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
                 if ($Select.Count -gt 0 ) {
-                    $Select
+                    if ($Limit) {
+                        $Select | Select-Object -First $Limit
+                    }
+                    else {
+                        $Select
+                    }
                 }
                 else {
                     Write-Host "No matching lines found!" -ForegroundColor Yellow
@@ -84,7 +102,12 @@ Begin {
                 Write-Host "`nParsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
                 if ($Select.Count -gt 0 ) {
-                    $Select
+                    if ($Limit) {
+                        $Select | Select-Object -First $Limit
+                    }
+                    else {
+                        $Select
+                    }
                 }
                 else {
                     Write-Host "No matching lines found!" -ForegroundColor Yellow
