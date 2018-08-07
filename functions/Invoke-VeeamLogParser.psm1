@@ -55,17 +55,41 @@ Begin {
             $Content = Get-Content $($VeeamBasePath + $Folder + "\" + $File)
             if ($Context) {
                 Write-Host "Parsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
-                $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
+                [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
+                if ($Select.Count -gt 0 ) {
+                    $Select
+                }
+                else {
+                    Write-Host "No matching lines found!" -ForegroundColor Yellow
+                }
                 ""
                 Write-Host "Parsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
-                $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
+                [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
+                if ($Select.Count -gt 0 ) {
+                    $Select
+                }
+                else {
+                    Write-Host "No matching lines found!" -ForegroundColor Yellow
+                }
             }
             else {
                 Write-Host "Parsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
-                $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
+                [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
+                if ($Select.Count -gt 0 ) {
+                    $Select
+                }
+                else {
+                    Write-Host "No matching lines found!" -ForegroundColor Yellow
+                }
                 ""
                 Write-Host "Parsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
-                $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
+                [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
+                if ($Select.Count -gt 0 ) {
+                    $Select
+                }
+                else {
+                    Write-Host "No matching lines found!" -ForegroundColor Yellow
+                }
             }
         }
         else {
