@@ -52,9 +52,10 @@ Begin {
         )
 
         if (Test-Path $($VeeamBasePath + $Folder)) {
+            Write-Host "Parsing Log Files(s): $($VeeamBasePath + $Folder + "\" + $File) `n" -ForegroundColor Gray
             $Content = Get-Content $($VeeamBasePath + $Folder + "\" + $File)
             if ($Context) {
-                Write-Host "Parsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
+                Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
                 if ($Select.Count -gt 0 ) {
                     $Select
@@ -62,8 +63,7 @@ Begin {
                 else {
                     Write-Host "No matching lines found!" -ForegroundColor Yellow
                 }
-                ""
-                Write-Host "Parsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
+                Write-Host "`nParsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
                 if ($Select.Count -gt 0 ) {
                     $Select
@@ -73,7 +73,7 @@ Begin {
                 }
             }
             else {
-                Write-Host "Parsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
+                Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
                 if ($Select.Count -gt 0 ) {
                     $Select
@@ -81,14 +81,13 @@ Begin {
                 else {
                     Write-Host "No matching lines found!" -ForegroundColor Yellow
                 }
-                ""
-                Write-Host "Parsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
+                Write-Host "`nParsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
                 if ($Select.Count -gt 0 ) {
                     $Select
                 }
                 else {
-                    Write-Host "No matching lines found!" -ForegroundColor Yellow
+                    Write-Host "No matching lines found in '$($VeeamBasePath + $Folder)'!" -ForegroundColor Yellow
                 }
             }
         }
