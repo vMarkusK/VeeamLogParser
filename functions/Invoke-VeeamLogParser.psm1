@@ -39,7 +39,7 @@ param(
         [Int]$Limit,
     [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Log Type")]
     [ValidateNotNullorEmpty()]
-    [ValidateSet("All","Endpoint","Mount","Backup","EnterpriseServer","Broker")]
+    [ValidateSet("All","Endpoint","Mount","Backup","EnterpriseServer","Broker","Catalog")]
         [String]$LogType
 )
 
@@ -138,6 +138,8 @@ Process {
         LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
         LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
         LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
+        LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
+        }
     }
     elseif ($LogType -eq "Endpoint") {
         LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
@@ -153,6 +155,9 @@ Process {
     }
     elseif ($LogType -eq "Broker") {
         LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
+    }
+    elseif ($LogType -eq "Catalog") {
+        LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
     }
 
 }
