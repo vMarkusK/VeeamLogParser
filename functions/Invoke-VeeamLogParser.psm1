@@ -141,8 +141,6 @@ Process {
         LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
         LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
         LogParser -Folder "Backup" -File "VeeamBackupManager.log"
-        }
-        }
     }
     elseif ($LogType -eq "Endpoint") {
         LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
@@ -168,7 +166,5 @@ Process {
     elseif ($LogType -eq "BackupManager") {
         LogParser -Folder "Backup" -File "VeeamBackupManager.log"
     }
-
-    VeeamBackupManager
 }
 }
