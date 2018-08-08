@@ -39,7 +39,7 @@ param(
         [Int]$Limit,
     [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Log Type")]
     [ValidateNotNullorEmpty()]
-    [ValidateSet("Endpoint","Mount","Backup")]
+    [ValidateSet("All","Endpoint","Mount","Backup")]
         [String]$LogType
 )
 
@@ -54,9 +54,19 @@ Begin {
                 [String]$File
         )
 
+        Write-Host "`nParsing Log Files(s): $($VeeamBasePath + $Folder + "\" + $File) `n" -ForegroundColor Gray
         if (Test-Path $($VeeamBasePath + $Folder)) {
-            Write-Host "Parsing Log Files(s): $($VeeamBasePath + $Folder + "\" + $File) `n" -ForegroundColor Gray
-            $Content = Get-Content $($VeeamBasePath + $Folder + "\" + $File)
+            if (Test-Path $($VeeamBasePath + $Folder + "\" + $File)   ) {
+                try {
+                    $Content = Get-Content $($VeeamBasePath + $Folder + "\" + $File)
+                }
+                catch {
+                    Write-Warning "Failed to get Content from File: '$($VeeamBasePath + $Folder + "\" + $File)'"
+                }
+            }
+            else {
+                Write-Warning "File $($VeeamBasePath + $Folder + "\" + $File) not found!"
+            }
             if ($Context) {
                 Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
                 [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
@@ -115,14 +125,19 @@ Begin {
             }
         }
         else {
-            Throw "No Log Files found in '$($VeeamBasePath + $Folder)'"
+            Write-Warning "Folder '$($VeeamBasePath + $Folder)' not Found!"
         }
     }
 }
 
 Process {
 
-    if ($LogType -eq "Endpoint") {
+    if ($LogType -eq "All") {
+        LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
+        LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
+        LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
+    }
+    elseif ($LogType -eq "Endpoint") {
         LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
     }
     elseif ($LogType -eq "Mount") {
