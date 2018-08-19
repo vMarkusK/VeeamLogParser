@@ -1,7 +1,7 @@
 function Invoke-VeeamLogParser {
 <#
     .DESCRIPTION
-       VeeamLogParser
+       The Veeam Log Parser Function extracts Error and Warning Messages from the Veeam File Logs of various products and services.
 
     .NOTES
         File Name  : Invoke-VeeamLogParser.psm1
@@ -13,31 +13,54 @@ function Invoke-VeeamLogParser {
         https://mycloudrevolution.com/
 
     .EXAMPLE
-        Invoke-VeeamLogParser
+        Invoke-VeeamLogParser -LogType Endpoint -Limit 2
 
     .PARAMETER VeeamBasePath
-        Base Path of the Veeam Log Files
+        The Base Path of the Veeam Log Files
 
+        Default: "C:\ProgramData\Veeam\"
+
+    .PARAMETER VeeamWarningPattern
+        The RegEx Pattern of Warning Messages
+
+        Default: "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning"
+
+    .PARAMETER VeeamErrorPattern
+        The RegEx Pattern of Error Messages
+
+        Default: "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError"
+
+    .PARAMETER Context
+        Show messages in Context
+
+    .PARAMETER Limit
+        Show limited number of messages
+
+    .PARAMETER LogType
+        The products or services Log you want to show
+
+        Valid Pattern:  "All","Endpoint","Mount","Backup","EnterpriseServer","Broker","Catalog","RestAPI","BackupManager",
+                        "CatalogReplication","DatabaseMaintenance","WebApp","PowerShell"
     #>
 
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Base Path of the Veeam Log Files")]
+    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="The Base Path of the Veeam Log Files")]
     [ValidateNotNullorEmpty()]
         [String] $VeeamBasePath = "C:\ProgramData\Veeam\",
-    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="My Parameter")]
+    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="The RegEx Pattern of Warning Messages")]
     [ValidateNotNullorEmpty()]
         [String] $VeeamWarningPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning",
-    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="My Parameter")]
+    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="The RegEx Pattern of Error Messages")]
     [ValidateNotNullorEmpty()]
         [String] $VeeamErrorPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError",
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages in Context")]
     [ValidateNotNullorEmpty()]
         [Switch]$Context,
-    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages limited number of messages")]
+    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show limited number of messages")]
     [ValidateNotNullorEmpty()]
         [Int]$Limit,
-    [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Log Type")]
+    [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="The products or services Log you want to show")]
     [ValidateNotNullorEmpty()]
     [ValidateSet("All","Endpoint","Mount","Backup","EnterpriseServer","Broker","Catalog","RestAPI","BackupManager",
     "CatalogReplication","DatabaseMaintenance","WebApp","PowerShell")]
@@ -45,7 +68,7 @@ param(
 )
 
 Begin {
-    function LogParser {
+    function invoke-LogParser {
         param (
             [Parameter(Mandatory=$True)]
             [ValidateNotNullorEmpty()]
@@ -134,54 +157,54 @@ Begin {
 Process {
 
     if ($LogType -eq "All") {
-        LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
-        LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
-        LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
-        LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
-        LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
-        LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
-        LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
-        LogParser -Folder "Backup" -File "VeeamBackupManager.log"
-        LogParser -Folder "Backup" -File "CatalogReplicationJob.log"
-        LogParser -Folder "Backup" -File "Job.DatabaseMaintenance.log"
-        LogParser -Folder "Backup" -File "Veeam.WebApp.log"
-        LogParser -Folder "Backup" -File "VeeamPowerShell.log"
+        Invoke-LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
+        Invoke-LogParser -Folder "Backup" -File "VeeamBackupManager.log"
+        Invoke-LogParser -Folder "Backup" -File "CatalogReplicationJob.log"
+        Invoke-LogParser -Folder "Backup" -File "Job.DatabaseMaintenance.log"
+        Invoke-LogParser -Folder "Backup" -File "Veeam.WebApp.log"
+        Invoke-LogParser -Folder "Backup" -File "VeeamPowerShell.log"
     }
     elseif ($LogType -eq "Endpoint") {
-        LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
+        Invoke-LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
     }
     elseif ($LogType -eq "Mount") {
-        LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
     }
     elseif ($LogType -eq "Backup") {
-        LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
     }
     elseif ($LogType -eq "EnterpriseServer") {
-        LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
     }
     elseif ($LogType -eq "Broker") {
-        LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
     }
     elseif ($LogType -eq "Catalog") {
-        LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
     }
     elseif ($LogType -eq "RestAPI") {
-        LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
+        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
     }
     elseif ($LogType -eq "BackupManager") {
-        LogParser -Folder "Backup" -File "VeeamBackupManager.log"
+        Invoke-LogParser -Folder "Backup" -File "VeeamBackupManager.log"
     }
     elseif ($LogType -eq "CatalogReplication") {
-        LogParser -Folder "Backup" -File "CatalogReplicationJob.log"
+        Invoke-LogParser -Folder "Backup" -File "CatalogReplicationJob.log"
     }
     elseif ($LogType -eq "DatabaseMaintenance") {
-        LogParser -Folder "Backup" -File "Job.DatabaseMaintenance.log"
+        Invoke-LogParser -Folder "Backup" -File "Job.DatabaseMaintenance.log"
     }
     elseif ($LogType -eq "WebApp") {
-        LogParser -Folder "Backup" -File "Veeam.WebApp.log"
+        Invoke-LogParser -Folder "Backup" -File "Veeam.WebApp.log"
     }
     elseif ($LogType -eq "PowerShell") {
-        LogParser -Folder "Backup" -File "VeeamPowerShell.log"
+        Invoke-LogParser -Folder "Backup" -File "VeeamPowerShell.log"
     }
 
 }

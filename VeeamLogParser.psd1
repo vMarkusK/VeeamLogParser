@@ -66,16 +66,16 @@ Copyright = '(c) 2018 Markus. Alle Rechte vorbehalten.'
 # NestedModules = @()
 
 # Aus diesem Modul zu exportierende Funktionen
-FunctionsToExport = '*'
+#FunctionsToExport = '*'
 
 # Aus diesem Modul zu exportierende Cmdlets
-CmdletsToExport = '*'
+CmdletsToExport = 'Invoke-VeeamLogParser'
 
 # Die aus diesem Modul zu exportierenden Variablen
-VariablesToExport = '*'
+#VariablesToExport = '*'
 
 # Aus diesem Modul zu exportierende Aliase
-AliasesToExport = '*'
+#AliasesToExport = '*'
 
 # Aus diesem Modul zu exportierende DSC-Ressourcen
 # DscResourcesToExport = @()
