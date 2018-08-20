@@ -120,12 +120,14 @@ Begin {
 
         }
 
+        #Method
         [Array]getWarnings() {
             $Content = $this.getContent()
             return $Content | Select-String -Pattern $([LogParser]::WarningPattern)
 
         }
 
+        #Method
         [Array]getErrorsAndWarnings() {
             $Content = $this.getContent()
             return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern)
@@ -133,7 +135,7 @@ Begin {
         }
 
     }
-    function invoke-LogParser {
+    function Invoke-LogParser {
         param (
             [Parameter(Mandatory=$True)]
             [ValidateNotNullorEmpty()]
