@@ -120,6 +120,18 @@ Begin {
 
         }
 
+        [Array]getWarnings() {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::WarningPattern)
+
+        }
+
+        [Array]getErrorsAndWarnings() {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern)
+
+        }
+
     }
     function invoke-LogParser {
         param (
