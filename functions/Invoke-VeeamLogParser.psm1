@@ -68,6 +68,42 @@ param(
 )
 
 Begin {
+
+    class LogParser {
+        #Properties
+        [String]$Name
+        [String]$BasePath
+        [String]$Folder
+        [String]$File
+
+        #Static
+        Static [String] $WarningPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning"
+        Static [String] $ErrorPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError"
+
+        #Constructor
+        LogParser ([String] $Name, [String]$BasePath, [String]$Folder, [String]$File) {
+            $this.Name = $Name
+            $this.BasePath = $BasePath
+            $this.Folder = $Folder
+            $this.File = $File
+        }
+
+        #Method
+        [Bool]checkFolder() {
+            return Test-Path $($this.BasePath + $this.Folder)
+        }
+
+        #Method
+        [Bool]checkFile() {
+            return Test-Path $($this.BasePath + $this.Folder + "\" + $this.File)
+        }
+
+        #Method
+        [Array]getContent() {
+            return Get-Content $($this.BasePath + $this.Folder + "\" + $this.File)
+        }
+
+    }
     function invoke-LogParser {
         param (
             [Parameter(Mandatory=$True)]
