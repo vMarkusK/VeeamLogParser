@@ -100,7 +100,24 @@ Begin {
 
         #Method
         [Array]getContent() {
-            return Get-Content $($this.BasePath + $this.Folder + "\" + $this.File)
+            if ($this.checkFolder()) {
+                if ($this.checkFile()) {
+                    return Get-Content $($this.BasePath + $this.Folder + "\" + $this.File)
+                }
+                else {
+                    return Write-Warning "File not found"
+                }
+            }
+            else {
+                return Write-Warning "Folder not found"
+            }
+        }
+
+        #Method
+        [Array]getErrors() {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern)
+
         }
 
     }
