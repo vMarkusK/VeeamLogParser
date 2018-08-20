@@ -66,10 +66,10 @@ Copyright = '(c) 2018 Markus. Alle Rechte vorbehalten.'
 # NestedModules = @()
 
 # Aus diesem Modul zu exportierende Funktionen
-#FunctionsToExport = '*'
+FunctionsToExport = 'Invoke-VeeamLogParser'
 
 # Aus diesem Modul zu exportierende Cmdlets
-CmdletsToExport = 'Invoke-VeeamLogParser'
+#CmdletsToExport = '*'
 
 # Die aus diesem Modul zu exportierenden Variablen
 #VariablesToExport = '*'
