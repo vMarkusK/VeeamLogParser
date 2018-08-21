@@ -149,6 +149,22 @@ Begin {
         }
 
     }
+    function Invoke-Output ($item) {
+        if ($Context) {
+            $Select = $item.getErrorsAndWarnings(2,2)
+        }
+        else {
+            $Select =  $item.getErrorsAndWarnings()
+        }
+
+        if ($Limit) {
+            $Select | Select-Object -Last $Limit
+        }
+        else {
+            $Select
+        }
+
+    }
 
     $LogTypes = @()
     $LogTypes += [LogParser]::new("Endpoint", $VeeamBasePath, "Endpoint", "Svc.VeeamEndpointBackup.log")
@@ -171,39 +187,14 @@ Process {
     if ($LogType -eq "All") {
         foreach ($item in $LogTypes) {
             Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'"
-            if ($Context) {
-                $Select = $item.getErrorsAndWarnings(2,2)
-            }
-            else {
-                $Select =  $item.getErrorsAndWarnings()
-            }
-
-            if ($Limit) {
-                $Select | Select-Object -Last $Limit
-            }
-            else {
-                $Select
-            }
-
+            Invoke-Output $item
         }
     }
     else {
         $item = $LogTypes | Where-Object {$_.Name -eq $LogType }
         if ($item) {
             Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'"
-            if ($Context) {
-                $Select = $item.getErrorsAndWarnings(2,2)
-            }
-            else {
-                $Select =  $item.getErrorsAndWarnings()
-            }
-
-            if ($Limit) {
-                $Select | Select-Object -Last $Limit
-            }
-            else {
-                $Select
-            }
+            Invoke-Output $item
         }
         else {
             Throw "Internal Error: LogType Missmatch"
