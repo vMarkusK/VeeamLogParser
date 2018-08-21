@@ -134,9 +134,23 @@ Begin {
         }
 
         #Method
+        [Array]getWarnings([int]$ContentB, [int]$ContentA) {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::WarningPattern) -AllMatches -Context $ContentB, $ContentA
+
+        }
+
+        #Method
         [Array]getErrorsAndWarnings() {
             $Content = $this.getContent()
-            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern)
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern) -AllMatches
+
+        }
+
+        #Method
+        [Array]getErrorsAndWarnings([int]$ContentB, [int]$ContentA) {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern) -AllMatches -Context $ContentB, $ContentA
 
         }
 
