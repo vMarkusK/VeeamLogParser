@@ -116,14 +116,20 @@ Begin {
         #Method
         [Array]getErrors() {
             $Content = $this.getContent()
-            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern)
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern) -AllMatches
 
+        }
+
+        #Method
+        [Array]getErrors([int]$ContentB, [int]$ContentA) {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern) -AllMatches -Context $ContentB, $ContentA
         }
 
         #Method
         [Array]getWarnings() {
             $Content = $this.getContent()
-            return $Content | Select-String -Pattern $([LogParser]::WarningPattern)
+            return $Content | Select-String -Pattern $([LogParser]::WarningPattern) -AllMatches
 
         }
 
