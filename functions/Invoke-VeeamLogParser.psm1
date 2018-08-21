@@ -15,20 +15,13 @@ function Invoke-VeeamLogParser {
     .EXAMPLE
         Invoke-VeeamLogParser -LogType Endpoint -Limit 2
 
+    .EXAMPLE
+        Invoke-VeeamLogParser -LogType Endpoint -Limit 2 -Context 2
+
     .PARAMETER VeeamBasePath
         The Base Path of the Veeam Log Files
 
         Default: "C:\ProgramData\Veeam\"
-
-    .PARAMETER VeeamWarningPattern
-        The RegEx Pattern of Warning Messages
-
-        Default: "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning"
-
-    .PARAMETER VeeamErrorPattern
-        The RegEx Pattern of Error Messages
-
-        Default: "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError"
 
     .PARAMETER Context
         Show messages in Context
@@ -50,7 +43,7 @@ param(
         [String] $VeeamBasePath = "C:\ProgramData\Veeam\",
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages in Context")]
     [ValidateNotNullorEmpty()]
-        [Switch]$Context,
+        [int]$Context,
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show limited number of messages")]
     [ValidateNotNullorEmpty()]
         [Int]$Limit,
@@ -151,7 +144,7 @@ Begin {
     }
     function Invoke-Output ($item) {
         if ($Context) {
-            $Select = $item.getErrorsAndWarnings(2,2)
+            $Select = $item.getErrorsAndWarnings($Context, $Context)
         }
         else {
             $Select =  $item.getErrorsAndWarnings()
