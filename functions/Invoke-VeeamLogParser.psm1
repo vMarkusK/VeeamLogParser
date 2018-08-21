@@ -186,14 +186,14 @@ Process {
 
     if ($LogType -eq "All") {
         foreach ($item in $LogTypes) {
-            Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'"
+            Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'" -ForegroundColor Gray
             Invoke-Output $item
         }
     }
     else {
         $item = $LogTypes | Where-Object {$_.Name -eq $LogType }
         if ($item) {
-            Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'"
+            Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'" -ForegroundColor Gray
             Invoke-Output $item
         }
         else {
