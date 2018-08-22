@@ -12,7 +12,7 @@
 RootModule = 'functions/Invoke-VeeamLogParser.psm1'
 
 # Die Versionsnummer dieses Moduls
-ModuleVersion = '0.1.0'
+ModuleVersion = '1.0.0'
 
 # ID zur eindeutigen Kennzeichnung dieses Moduls
 GUID = 'e2d8c4e4-2823-4da7-98b5-2ad1123f0ce2'
@@ -92,13 +92,13 @@ PrivateData = @{
     PSData = @{
 
         # 'Tags' wurde auf das Modul angewendet und unterstützt die Modulermittlung in Onlinekatalogen.
-        # Tags = @()
+        ags = @('Veeam')
 
         # Eine URL zur Lizenz für dieses Modul.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/mycloudrevolution/VeeamLogParser/blob/master/LICENSE'
 
         # Eine URL zur Hauptwebsite für dieses Projekt.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/mycloudrevolution/VeeamLogParser'
 
         # Eine URL zu einem Symbol, das das Modul darstellt.
         # IconUri = ''
