@@ -15,20 +15,13 @@ function Invoke-VeeamLogParser {
     .EXAMPLE
         Invoke-VeeamLogParser -LogType Endpoint -Limit 2
 
+    .EXAMPLE
+        Invoke-VeeamLogParser -LogType Endpoint -Limit 2 -Context 2
+
     .PARAMETER VeeamBasePath
         The Base Path of the Veeam Log Files
 
         Default: "C:\ProgramData\Veeam\"
-
-    .PARAMETER VeeamWarningPattern
-        The RegEx Pattern of Warning Messages
-
-        Default: "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning"
-
-    .PARAMETER VeeamErrorPattern
-        The RegEx Pattern of Error Messages
-
-        Default: "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError"
 
     .PARAMETER Context
         Show messages in Context
@@ -48,15 +41,9 @@ param(
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="The Base Path of the Veeam Log Files")]
     [ValidateNotNullorEmpty()]
         [String] $VeeamBasePath = "C:\ProgramData\Veeam\",
-    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="The RegEx Pattern of Warning Messages")]
-    [ValidateNotNullorEmpty()]
-        [String] $VeeamWarningPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning",
-    [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="The RegEx Pattern of Error Messages")]
-    [ValidateNotNullorEmpty()]
-        [String] $VeeamErrorPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError",
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show messages in Context")]
     [ValidateNotNullorEmpty()]
-        [Switch]$Context,
+        [int]$Context,
     [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Show limited number of messages")]
     [ValidateNotNullorEmpty()]
         [Int]$Limit,
@@ -68,144 +55,143 @@ param(
 )
 
 Begin {
-    function invoke-LogParser {
-        param (
-            [Parameter(Mandatory=$True)]
-            [ValidateNotNullorEmpty()]
-                [String]$Folder,
-            [Parameter(Mandatory=$True)]
-            [ValidateNotNullorEmpty()]
-                [String]$File
-        )
 
-        Write-Host "`nParsing Log Files(s): $($VeeamBasePath + $Folder + "\" + $File) `n" -ForegroundColor Gray
-        if (Test-Path $($VeeamBasePath + $Folder)) {
-            if (Test-Path $($VeeamBasePath + $Folder + "\" + $File)   ) {
-                try {
-                    $Content = Get-Content $($VeeamBasePath + $Folder + "\" + $File)
+    class LogParser {
+        #Properties
+        [String]$Name
+        [String]$BasePath
+        [String]$Folder
+        [String]$File
+
+        #Static
+        Static [String] $WarningPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sWarning"
+        Static [String] $ErrorPattern = "\[\d+.\d+.\d+\s\d+\:\d+:\d+]\s\<\d+\>\sError"
+
+        #Constructor
+        LogParser ([String] $Name, [String]$BasePath, [String]$Folder, [String]$File) {
+            $this.Name = $Name
+            $this.BasePath = $BasePath
+            $this.Folder = $Folder
+            $this.File = $File
+        }
+
+        #Method
+        [Bool]checkFolder() {
+            return Test-Path $($this.BasePath + $this.Folder)
+        }
+
+        #Method
+        [Bool]checkFile() {
+            return Test-Path $($this.BasePath + $this.Folder + "\" + $this.File)
+        }
+
+        #Method
+        [Array]getContent() {
+            if ($this.checkFolder()) {
+                if ($this.checkFile()) {
+                    return Get-Content $($this.BasePath + $this.Folder + "\" + $this.File)
                 }
-                catch {
-                    Write-Warning "Failed to get Content from File: '$($VeeamBasePath + $Folder + "\" + $File)'"
+                else {
+                    return Write-Warning "File not found"
                 }
             }
             else {
-                Write-Warning "File $($VeeamBasePath + $Folder + "\" + $File) not found!"
+                return Write-Warning "Folder not found"
             }
-            if ($Context) {
-                Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
-                [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches -Context 2, 2
-                if ($Select.Count -gt 0 ) {
-                    if ($Limit) {
-                        $Select | Select-Object -Last $Limit
-                    }
-                    else {
-                        $Select
-                    }
-                }
-                else {
-                    Write-Host "No matching lines found!" -ForegroundColor Yellow
-                }
-                Write-Host "`nParsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
-                [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches -Context 2, 2
-                if ($Select.Count -gt 0 ) {
-                    if ($Limit) {
-                        $Select | Select-Object -Last $Limit
-                    }
-                    else {
-                        $Select
-                    }
-                }
-                else {
-                    Write-Host "No matching lines found!" -ForegroundColor Yellow
-                }
-            }
-            else {
-                Write-Host "`nParsing Warning Log messages with Pattern '$VeeamWarningPattern':" -ForegroundColor Gray
-                [Array]$Select = $Content | Select-String -Pattern $VeeamWarningPattern -AllMatches
-                if ($Select.Count -gt 0 ) {
-                    if ($Limit) {
-                        $Select | Select-Object -Last $Limit
-                    }
-                    else {
-                        $Select
-                    }
-                }
-                else {
-                    Write-Host "No matching lines found!" -ForegroundColor Yellow
-                }
-                Write-Host "`nParsing Error Log messages with Pattern '$VeeamErrorPattern':" -ForegroundColor Gray
-                [Array]$Select = $Content | Select-String -Pattern $VeeamErrorPattern -AllMatches
-                if ($Select.Count -gt 0 ) {
-                    if ($Limit) {
-                        $Select | Select-Object -Last $Limit
-                    }
-                    else {
-                        $Select
-                    }
-                }
-                else {
-                    Write-Host "No matching lines found!" -ForegroundColor Yellow
-                }
-            }
+        }
+
+        #Method
+        [Array]getErrors() {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern) -AllMatches
+
+        }
+
+        #Method
+        [Array]getErrors([int]$ContentB, [int]$ContentA) {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern) -AllMatches -Context $ContentB, $ContentA
+        }
+
+        #Method
+        [Array]getWarnings() {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::WarningPattern) -AllMatches
+
+        }
+
+        #Method
+        [Array]getWarnings([int]$ContentB, [int]$ContentA) {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::WarningPattern) -AllMatches -Context $ContentB, $ContentA
+
+        }
+
+        #Method
+        [Array]getErrorsAndWarnings() {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern) -AllMatches
+
+        }
+
+        #Method
+        [Array]getErrorsAndWarnings([int]$ContentB, [int]$ContentA) {
+            $Content = $this.getContent()
+            return $Content | Select-String -Pattern $([LogParser]::ErrorPattern), $([LogParser]::WarningPattern) -AllMatches -Context $ContentB, $ContentA
+
+        }
+
+    }
+    function Invoke-Output ($item) {
+        if ($Context) {
+            $Select = $item.getErrorsAndWarnings($Context, $Context)
         }
         else {
-            Write-Warning "Folder '$($VeeamBasePath + $Folder)' not Found!"
+            $Select =  $item.getErrorsAndWarnings()
         }
+
+        if ($Limit) {
+            $Select | Select-Object -Last $Limit
+        }
+        else {
+            $Select
+        }
+
     }
+
+    $LogTypes = @()
+    $LogTypes += [LogParser]::new("Endpoint", $VeeamBasePath, "Endpoint", "Svc.VeeamEndpointBackup.log")
+    $LogTypes += [LogParser]::new("Mount", $VeeamBasePath, "Backup", "Svc.VeeamMount.log")
+    $LogTypes += [LogParser]::new("Backup", $VeeamBasePath, "Backup", "Svc.VeeamBackup.log")
+    $LogTypes += [LogParser]::new("EnterpriseServer", $VeeamBasePath, "Backup", "Svc.VeeamBES.log")
+    $LogTypes += [LogParser]::new("Broker", $VeeamBasePath, "Backup", "Svc.VeeamBroker.log")
+    $LogTypes += [LogParser]::new("Catalog", $VeeamBasePath, "Backup", "Svc.VeeamCatalog.log")
+    $LogTypes += [LogParser]::new("RestAPI", $VeeamBasePath, "Backup", "Svc.VeeamRestAPI.log")
+    $LogTypes += [LogParser]::new("BackupManager", $VeeamBasePath, "Backup", "VeeamBackupManager.log")
+    $LogTypes += [LogParser]::new("CatalogReplication", $VeeamBasePath, "Backup", "CatalogReplicationJob.log")
+    $LogTypes += [LogParser]::new("DatabaseMaintenance", $VeeamBasePath, "Backup", "Job.DatabaseMaintenance.log")
+    $LogTypes += [LogParser]::new("WebApp", $VeeamBasePath, "Backup", "Veeam.WebApp.log")
+    $LogTypes += [LogParser]::new("PowerShell", $VeeamBasePath, "Backup", "VeeamPowerShell.log")
+
 }
 
 Process {
 
     if ($LogType -eq "All") {
-        Invoke-LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
-        Invoke-LogParser -Folder "Backup" -File "VeeamBackupManager.log"
-        Invoke-LogParser -Folder "Backup" -File "CatalogReplicationJob.log"
-        Invoke-LogParser -Folder "Backup" -File "Job.DatabaseMaintenance.log"
-        Invoke-LogParser -Folder "Backup" -File "Veeam.WebApp.log"
-        Invoke-LogParser -Folder "Backup" -File "VeeamPowerShell.log"
+        foreach ($item in $LogTypes) {
+            Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'" -ForegroundColor Gray
+            Invoke-Output $item
+        }
     }
-    elseif ($LogType -eq "Endpoint") {
-        Invoke-LogParser -Folder "Endpoint" -File "Svc.VeeamEndpointBackup.log"
+    else {
+        $item = $LogTypes | Where-Object {$_.Name -eq $LogType }
+        if ($item) {
+            Write-Host "`nProcessing '$($item.File)' in '$($item.BasePath + $item.Folder + "\")'" -ForegroundColor Gray
+            Invoke-Output $item
+        }
+        else {
+            Throw "Internal Error: LogType Missmatch"
+        }
     }
-    elseif ($LogType -eq "Mount") {
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamMount.log"
-    }
-    elseif ($LogType -eq "Backup") {
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBackup.log"
-    }
-    elseif ($LogType -eq "EnterpriseServer") {
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBES.log"
-    }
-    elseif ($LogType -eq "Broker") {
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamBroker.log"
-    }
-    elseif ($LogType -eq "Catalog") {
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamCatalog.log"
-    }
-    elseif ($LogType -eq "RestAPI") {
-        Invoke-LogParser -Folder "Backup" -File "Svc.VeeamRestAPI.log"
-    }
-    elseif ($LogType -eq "BackupManager") {
-        Invoke-LogParser -Folder "Backup" -File "VeeamBackupManager.log"
-    }
-    elseif ($LogType -eq "CatalogReplication") {
-        Invoke-LogParser -Folder "Backup" -File "CatalogReplicationJob.log"
-    }
-    elseif ($LogType -eq "DatabaseMaintenance") {
-        Invoke-LogParser -Folder "Backup" -File "Job.DatabaseMaintenance.log"
-    }
-    elseif ($LogType -eq "WebApp") {
-        Invoke-LogParser -Folder "Backup" -File "Veeam.WebApp.log"
-    }
-    elseif ($LogType -eq "PowerShell") {
-        Invoke-LogParser -Folder "Backup" -File "VeeamPowerShell.log"
-    }
-
 }
 }

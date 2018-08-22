@@ -18,19 +18,19 @@ ModuleVersion = '0.1.0'
 GUID = 'e2d8c4e4-2823-4da7-98b5-2ad1123f0ce2'
 
 # Autor dieses Moduls
-Author = 'Markus'
+Author = 'Markus Kraus (@vMarkus_K)'
 
 # Unternehmen oder Hersteller dieses Moduls
-CompanyName = 'Unbekannt'
+CompanyName = 'mycloudrevolution.com'
 
 # Urheberrechtserklärung für dieses Modul
 Copyright = '(c) 2018 Markus. Alle Rechte vorbehalten.'
 
 # Beschreibung der von diesem Modul bereitgestellten Funktionen
-# Description = ''
+Description = 'The Veeam Log Parser Function extracts Error and Warning Messages from the Veeam File Logs of various Veeam products and services.'
 
 # Die für dieses Modul mindestens erforderliche Version des Windows PowerShell-Moduls
-# PowerShellVersion = ''
+PowerShellVersion = '5.0'
 
 # Der Name des für dieses Modul erforderlichen Windows PowerShell-Hosts
 # PowerShellHostName = ''

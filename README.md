@@ -23,7 +23,7 @@ The Veeam Log Parser extracts Error and Warning Messages from the Veeam File Log
 
 ### Examples
 
-![Invoke-VeeamLogParser-LogType_CatalogReplication-Context](/media/Invoke-VeeamLogParser-LogType_CatalogReplication-Context.png)
+![Invoke-VeeamLogParser-LogType_All](/media/Invoke-VeeamLogParser-LogType_All.png)
 
-![Invoke-VeeamLogParser-LogType_PowerShell](/media/Invoke-VeeamLogParser-LogType_PowerShell.png)
+![Invoke-VeeamLogParser-LogType_PowerShell-Limit-Content](/media/Invoke-VeeamLogParser-LogType_PowerShell-Limit-Content.png)
 
