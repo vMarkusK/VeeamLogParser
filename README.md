@@ -15,7 +15,7 @@ MY CLOUD-(R)EVOLUTION [mycloudrevolution.com](http://mycloudrevolution.com/)
 
 ## Project Documentation:
 
-[Read the Docs](http://readthedocs.io/)
+[Read the Docs - VeeamLogParser](https://veeamlogparser.readthedocs.io/)
 
 ## Project Description:
 

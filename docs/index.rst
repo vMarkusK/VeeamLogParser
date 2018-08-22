@@ -1,7 +1,13 @@
-Welcome to my <%=$PLASTER_PARAM_ModuleName%> Module
+Welcome to my VeeamLogParser Module
 ========================
 
-This is the basic documentation of the '<%=$PLASTER_PARAM_ModuleName%>' PowerShell Module.
+The Veeam Log Parser extracts Error and Warning Messages from the Veeam File Logs of various Veeam products and services.
+
+This is the basic documentation of the 'VeeamLogParser PowerShell Module.
+
+GitHub: https://github.com/mycloudrevolution/VeeamLogParser/
+
+WebSite: https://mycloudrevolution.com/
 
 
 * :ref:`feature-docs`
